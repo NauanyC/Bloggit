@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 //Utils
 import { jsUcfirst, trimString } from "../../utils/string";
+import { randomDate } from "../../utils/date";
 
 //UI
 import Box from "@material-ui/core/Box";
@@ -68,7 +69,7 @@ function BlogItem({ author, title, body }: Blog) {
                 color="textSecondary"
                 component="p"
               >
-                May 14, 2020
+                {randomDate(new Date(2018, 0, 1), new Date())}
               </Typography>
             </Box>
           </Box>
