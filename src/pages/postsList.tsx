@@ -19,9 +19,37 @@ const PostsList: React.SFC<PostsListProps> = () => {
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const pageSize = 10;
+  const offset = (page - 1) * pageSize;
+
+  const currentPageData = blogs.slice(offset, offset + pageSize);
 
   const handlePageChange = (event: object, value: number) => {
     setPage(value);
+  };
+
+  console.log(blogs);
+
+  const renderBlogs = () => {
+    if (error) {
+      return <h1>Sorry, something weird happened...</h1>;
+    }
+    if (loading) {
+      return <h1>Wow, loading!</h1>;
+    }
+    if (blogs.length < 1) {
+      return <h1>No blogs found!</h1>;
+    }
+
+    console.log("blogs pogs");
+    console.log(blogs);
+
+    return (
+      <ul>
+        {currentPageData.map((blog) => (
+          <li>{blog.title}</li>
+        ))}
+      </ul>
+    );
   };
 
   useEffect(() => {
@@ -48,6 +76,8 @@ const PostsList: React.SFC<PostsListProps> = () => {
   return (
     <div className="PostsList">
       <h1>PostsList</h1>
+
+      <ul>{renderBlogs()}</ul>
 
       <Pagination
         className="my-3"
