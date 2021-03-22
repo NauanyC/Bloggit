@@ -8,6 +8,7 @@
     "build": "webpack"
   },
   "dependencies": {
+    "@types/react-router-dom": "^5.1.7",
     "git-commit-msg-linter": "^3.0.4",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
