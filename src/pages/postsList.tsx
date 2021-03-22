@@ -6,16 +6,26 @@ import { makeStyles } from "@material-ui/core/styles";
 //UI
 import Pagination from "@material-ui/lab/Pagination";
 import Box from "@material-ui/core/Box";
+import Container from "@material-ui/core/Container";
+import Typography from "@material-ui/core/Typography";
+import Grid from "@material-ui/core/Grid";
+import CircularProgress from "@material-ui/core/CircularProgress";
+
+//Components
+import BlogItem from "../components/BlogItem";
 
 //Interfaces
 import { Blog } from "../interfaces/Blog";
 import { User } from "../interfaces/User";
 
+//Utils
+import { shuffle } from "../utils/array";
+
 export interface PostsListProps {}
 
 const useStyles = makeStyles((theme) => ({
   hero: {
-    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1616435209037-c4eada11b3f9?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')`,
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1508672019048-805c876b67e2?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1393&q=80')`,
     height: "500px",
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",
@@ -32,7 +42,14 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   heroTitle: {
-    color: "#F7F7F7",
+    color: "#fcfcfc",
+  },
+  blogsContainer: {
+    paddingTop: theme.spacing(4),
+  },
+  blogTitle: {
+    fontWeight: 800,
+    paddingBottom: theme.spacing(8),
   },
 }));
 
@@ -40,9 +57,12 @@ const PostsList: React.SFC<PostsListProps> = () => {
   const classes = useStyles();
 
   const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
+
+  const [users, setUsers] = useState<User[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [usersError, setUsersError] = useState<string>("");
 
   //Pagination
   const [page, setPage] = useState(1);
@@ -58,43 +78,95 @@ const PostsList: React.SFC<PostsListProps> = () => {
 
   const renderBlogs = () => {
     if (error) {
-      return <h1>Sorry, something weird happened...</h1>;
+      return <Typography>Sorry, something weird happened...</Typography>;
     }
-    if (loading) {
-      return <h1>Wow, loading!</h1>;
+    if (loading || loadingUsers) {
+      return <Typography>Loading...</Typography>;
     }
     if (blogs.length < 1) {
-      return <h1>No blogs found!</h1>;
+      return <Typography color="secondary">No blogs found!</Typography>;
     }
 
     return (
-      <ul>
+      <>
         {currentPageData.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
+          <Grid item xs={12} sm={6} md={4} key={blog.id}>
+            <BlogItem
+              userId={blog.userId}
+              id={blog.id}
+              author={blog.author}
+              title={blog.title}
+              body={blog.body}
+            ></BlogItem>
+          </Grid>
         ))}
-      </ul>
+      </>
     );
   };
 
-  useEffect(() => {
-    setError("");
-    setLoading(true);
+  async function fetchUsers() {
+    try {
+      setLoadingUsers(true);
+      let response = await axios.get<User[]>(
+        "https://jsonplaceholder.typicode.com/users"
+      );
+      setLoadingUsers(false);
+      setUsersError("");
+      return response.data;
+    } catch (ex) {
+      const error =
+        ex.response.status === 404
+          ? "Resource not found"
+          : "An unexpected error has occurred";
 
-    axios
-      .get<Blog[]>("https://jsonplaceholder.typicode.com/posts")
-      .then((response) => {
-        setBlogs(response.data);
-        setLoading(false);
-        setCount(Math.ceil(response.data.length / pageSize));
-      })
-      .catch((ex) => {
-        const error =
-          ex.response.status === 404
-            ? "Resource not found"
-            : "An unexpected error has occurred";
-        setError(error);
-        setLoading(false);
-      });
+      setUsersError(error);
+      setLoadingUsers(false);
+    }
+  }
+
+  async function fetchPosts() {
+    try {
+      setLoading(true);
+      let response = await axios.get<Blog[]>(
+        "https://jsonplaceholder.typicode.com/posts"
+      );
+      setCount(Math.ceil(response.data.length / pageSize));
+      setLoading(false);
+      setError("");
+      return response.data;
+    } catch (ex) {
+      const error =
+        ex.response.status === 404
+          ? "Resource not found"
+          : "An unexpected error has occurred";
+
+      setError(error);
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    async function setPosts() {
+      const users = await fetchUsers();
+      const posts = await fetchPosts();
+
+      if (posts && posts.length > 0) {
+        posts.map((post, index) => {
+          const user = users && users.find((user) => user.id === post.userId);
+          posts[index].author = user?.name;
+        });
+      }
+
+      if (users && !usersError && !loadingUsers) {
+        users && setUsers(users);
+      }
+
+      if (posts && !error && !loading) {
+        posts && setBlogs(shuffle(posts));
+      }
+    }
+
+    setPosts();
   }, []);
 
   return (
@@ -102,7 +174,16 @@ const PostsList: React.SFC<PostsListProps> = () => {
       <Box className={classes.hero}>
         <Box className={classes.heroTitle}>Bloggit</Box>
       </Box>
-      <ul>{renderBlogs()}</ul>
+
+      <Container maxWidth="lg" className={classes.blogsContainer}>
+        <Typography variant="h4" className={classes.blogTitle}>
+          Recent Articles
+        </Typography>
+
+        <Grid container spacing={6}>
+          {renderBlogs()}
+        </Grid>
+      </Container>
 
       <Pagination
         className="my-3"
