@@ -7,11 +7,13 @@ import Pagination from "@material-ui/lab/Pagination";
 
 //Interfaces
 import { Blog } from "../interfaces/Blog";
+import { User } from "../interfaces/User";
 
 export interface PostsListProps {}
 
 const PostsList: React.SFC<PostsListProps> = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
@@ -27,8 +29,6 @@ const PostsList: React.SFC<PostsListProps> = () => {
     setPage(value);
   };
 
-  console.log(blogs);
-
   const renderBlogs = () => {
     if (error) {
       return <h1>Sorry, something weird happened...</h1>;
@@ -39,9 +39,6 @@ const PostsList: React.SFC<PostsListProps> = () => {
     if (blogs.length < 1) {
       return <h1>No blogs found!</h1>;
     }
-
-    console.log("blogs pogs");
-    console.log(blogs);
 
     return (
       <ul>
@@ -70,6 +67,14 @@ const PostsList: React.SFC<PostsListProps> = () => {
             : "An unexpected error has occurred";
         setError(error);
         setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get<User[]>("https://jsonplaceholder.typicode.com/users")
+      .then((response) => {
+        setUsers(response.data);
       });
   }, []);
 

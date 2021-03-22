@@ -1,4 +1,4 @@
-export interface Blog {
+export interface User {
     id: number;
     name: string;
   }
