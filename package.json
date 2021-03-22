@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "start": "webpack serve --open",
+    "build": "webpack"
+  },
   "dependencies": {
     "git-commit-msg-linter": "^3.0.4",
     "react": "^17.0.1",
