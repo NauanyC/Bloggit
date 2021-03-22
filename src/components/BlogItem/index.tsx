@@ -1,6 +1,9 @@
 import * as React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
+//Utils
+import { jsUcfirst, trimString } from "../../utils/string";
+
 //UI
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
@@ -11,6 +14,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import BookmarkBorderIcon from "@material-ui/icons/BookmarkBorder";
 import Avatar from "@material-ui/core/Avatar";
+
 //Interfaces
 import { Blog } from "../../interfaces/Blog";
 
@@ -45,10 +49,10 @@ function BlogItem({ author, title, body }: Blog) {
           />
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
-              {title}
+              {jsUcfirst(title)}
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
-              {body}
+              {jsUcfirst(trimString(body, 100))}
             </Typography>
           </CardContent>
         </CardActionArea>
