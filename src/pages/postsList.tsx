@@ -51,6 +51,11 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 800,
     paddingBottom: theme.spacing(8),
   },
+  pagination: {
+    padding: theme.spacing(10),
+    justifyContent: "center",
+    display: "flex",
+  },
 }));
 
 const PostsList: React.SFC<PostsListProps> = () => {
@@ -67,7 +72,7 @@ const PostsList: React.SFC<PostsListProps> = () => {
   //Pagination
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
-  const pageSize = 10;
+  const pageSize = 9;
   const offset = (page - 1) * pageSize;
 
   const currentPageData = blogs.slice(offset, offset + pageSize);
@@ -183,18 +188,17 @@ const PostsList: React.SFC<PostsListProps> = () => {
         <Grid container spacing={6}>
           {renderBlogs()}
         </Grid>
+        <Pagination
+          className={classes.pagination}
+          count={count}
+          page={page}
+          siblingCount={1}
+          boundaryCount={1}
+          variant="outlined"
+          shape="rounded"
+          onChange={handlePageChange}
+        />
       </Container>
-
-      <Pagination
-        className="my-3"
-        count={count}
-        page={page}
-        siblingCount={1}
-        boundaryCount={1}
-        variant="outlined"
-        shape="rounded"
-        onChange={handlePageChange}
-      />
     </div>
   );
 };
