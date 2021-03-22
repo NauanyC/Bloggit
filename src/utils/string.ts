@@ -6,3 +6,4 @@ export function jsUcfirst(string: string)
 export function trimString(string: string, size:number) {
     return string.padEnd(size).substring(0, size) + "...";
   }
+  
