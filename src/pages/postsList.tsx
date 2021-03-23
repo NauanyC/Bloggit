@@ -195,6 +195,7 @@ const PostsList: React.SFC<PostsListProps> = () => {
           boundaryCount={1}
           variant="outlined"
           shape="rounded"
+          color="secondary"
           onChange={handlePageChange}
         />
       </Container>
