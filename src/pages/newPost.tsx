@@ -1,9 +1,6 @@
 import * as React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
-//Interfaces
-import { Blog } from "../interfaces/Blog";
-
 //UI
 import Box from "@material-ui/core/Box";
 

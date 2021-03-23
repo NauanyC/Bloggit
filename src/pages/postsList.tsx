@@ -106,7 +106,7 @@ const PostsList: React.SFC<PostsListProps> = () => {
             sm={6}
             md={4}
             key={blog.id}
-            onClick={(e) => {
+            onClick={() => {
               handleRedirect(String(blog.id));
             }}
           >
