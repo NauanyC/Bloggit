@@ -2,6 +2,7 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { makeStyles } from "@material-ui/core/styles";
+import { useHistory } from "react-router-dom";
 
 //UI
 import Pagination from "@material-ui/lab/Pagination";
@@ -59,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
 
 const PostsList: React.SFC<PostsListProps> = () => {
   const classes = useStyles();
+  const history = useHistory();
 
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(false);
@@ -91,10 +93,23 @@ const PostsList: React.SFC<PostsListProps> = () => {
       return <Typography color="secondary">No blogs found!</Typography>;
     }
 
+    const handleRedirect = (href: string) => {
+      history.push(href);
+    };
+
     return (
       <>
         {currentPageData.map((blog) => (
-          <Grid item xs={12} sm={6} md={4} key={blog.id}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            key={blog.id}
+            onClick={(e) => {
+              handleRedirect(String(blog.id));
+            }}
+          >
             <BlogItem
               userId={blog.userId}
               id={blog.id}
