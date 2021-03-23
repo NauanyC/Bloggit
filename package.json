@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "author": "NauanyC",
+  "email": "nauanycc@outlook.com.br",
   "scripts": {
     "start": "webpack serve --open",
     "build": "webpack"
