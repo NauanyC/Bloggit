@@ -36,10 +36,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function BlogItem({ author, title, body, image }: Blog) {
+function BlogItem({ author, title, body, userId }: Blog) {
   const classes = useStyles();
 
-  const imageId = Math.floor(Math.random() * 300) + 1;
+  const imageId = Math.floor(Math.random() * 410) + 1;
 
   return (
     <div className="Blog">
@@ -47,8 +47,8 @@ function BlogItem({ author, title, body, image }: Blog) {
         <CardActionArea>
           <CardMedia
             className={classes.media}
-            image={`https://source.unsplash.com/collection/=${imageId}`}
-            title="Contemplative Reptile"
+            image={`https://source.unsplash.com/collection/=${userId}`}
+            title="Post"
           />
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">

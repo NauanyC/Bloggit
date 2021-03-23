@@ -23,7 +23,7 @@ export interface PostProps {
 
 const useStyles = makeStyles((theme) => ({
   hero: {
-    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1616503451125-2513edf2291f?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80')`,
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://cdn.discordapp.com/attachments/410134858623614996/824028967807877213/3b36f9b606fabd4a513d48def6716718.png')`,
     height: "100vh",
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",
@@ -39,12 +39,16 @@ const useStyles = makeStyles((theme) => ({
       fontSize: "3em",
     },
   },
+  blogViewContainer: {
+    display: "flex",
+    justifyContent: "center",
+  },
 }));
 
 const Post: React.SFC<PostProps> = ({ match }) => {
   const classes = useStyles();
   const [post, setPost] = useState({} as Blog);
-  const [writer, setWriter] = useState({} as User);
+  const [author, setAuthor] = useState({} as User);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
 
@@ -85,10 +89,10 @@ const Post: React.SFC<PostProps> = ({ match }) => {
     if (loading) {
       return <Typography>Loading...</Typography>;
     }
-    if (!post) {
+    if (!post || !author) {
       return <Typography color="secondary">No blogs found!</Typography>;
     } else {
-      return <BlogView author={writer} post={post} />;
+      return <BlogView blog={post} author={author} />;
     }
   };
 
@@ -98,8 +102,8 @@ const Post: React.SFC<PostProps> = ({ match }) => {
       const post = await fetchPost();
       const user = await fetchUser(post?.userId || 1);
 
-      post && setPost(post);
-      user && setWriter(user);
+      post && setPost({ ...post });
+      user && setAuthor(user);
 
       if (user && post) {
         setLoading(false);
@@ -112,8 +116,8 @@ const Post: React.SFC<PostProps> = ({ match }) => {
   return (
     <div className="Post">
       <Box className={classes.hero}>
-        <Container maxWidth="md">
-          <Paper elevation={4}>{renderBlog()}</Paper>
+        <Container maxWidth="md" className={classes.blogViewContainer}>
+          {renderBlog()}
         </Container>
       </Box>
     </div>
